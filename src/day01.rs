@@ -30,22 +30,20 @@ impl From<&str> for DialTurn {
     }
 }
 
-fn dial_seq(start: i32, dial_size: i32, moves: impl Iterator<Item = DialTurn>) -> Vec<i32> {
-    let mut positions = vec![start];
-    let mut pos = start;
-
-    for m in moves {
-        pos = (pos
-            + if matches!(m.dir, Direction::Left) {
-                -m.count
-            } else {
-                m.count
-            })
+fn dial_seq(
+    start: i32,
+    dial_size: i32,
+    moves: impl Iterator<Item = DialTurn>,
+) -> impl Iterator<Item = i32> {
+    moves.scan(start, move |state, m| {
+        *state = match m.dir {
+            Direction::Left => *state - m.count,
+            Direction::Right => *state + m.count,
+        }
         .rem_euclid(dial_size);
-        positions.push(pos);
-    }
 
-    positions
+        Some(*state)
+    })
 }
 
 pub fn part_1(input: &str) -> i32 {
@@ -54,8 +52,7 @@ pub fn part_1(input: &str) -> i32 {
 
     let moves = input.lines().map(DialTurn::from);
     dial_seq(START_POS, DIAL_SIZE, moves)
-        .iter()
-        .filter(|x| **x == 0)
+        .filter(|x| *x == 0)
         .count() as i32
 }
 
@@ -73,7 +70,6 @@ pub fn part_2(input: &str) -> i32 {
     });
 
     dial_seq(START_POS, DIAL_SIZE, moves)
-        .iter()
-        .filter(|x| **x == 0)
+        .filter(|x| *x == 0)
         .count() as i32
 }
