@@ -1,20 +1,18 @@
 // https://adventofcode.com/2025/day/1
 
-use std::{ops::Rem, thread::current};
-
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, Copy)]
 enum Direction {
     Left,
     Right,
 }
 
 #[derive(Debug)]
-struct DialMove {
+struct DialTurn {
     dir: Direction,
     count: i32,
 }
 
-impl From<&str> for DialMove {
+impl From<&str> for DialTurn {
     fn from(value: &str) -> Self {
         let mut chars = value.chars();
 
@@ -32,39 +30,50 @@ impl From<&str> for DialMove {
     }
 }
 
-pub fn part_1(input: &str) -> i32 {
-    const DIAL_SIZE: i32 = 100;
-    let mut pos = 50; // Dial starts at 50
-    let mut seq = vec![pos];
+fn dial_seq(start: i32, dial_size: i32, moves: impl Iterator<Item = DialTurn>) -> Vec<i32> {
+    let mut positions = vec![start];
+    let mut pos = start;
 
-    for line in input.lines() {
-        let m = DialMove::from(line);
+    for m in moves {
         pos = (pos
-            + if m.dir == Direction::Left {
+            + if matches!(m.dir, Direction::Left) {
                 -m.count
             } else {
                 m.count
             })
-        .rem_euclid(DIAL_SIZE);
-        seq.push(pos);
+        .rem_euclid(dial_size);
+        positions.push(pos);
     }
 
-    seq.into_iter().filter(|x| *x == 0).count() as i32
+    positions
+}
+
+pub fn part_1(input: &str) -> i32 {
+    const DIAL_SIZE: i32 = 100;
+    const START_POS: i32 = 50;
+
+    let moves = input.lines().map(DialTurn::from);
+    dial_seq(START_POS, DIAL_SIZE, moves)
+        .iter()
+        .filter(|x| **x == 0)
+        .count() as i32
 }
 
 pub fn part_2(input: &str) -> i32 {
-    const DIAL_SIZE: i32 = 100; // Total numbers on the dial
-    let mut pos = 50; // Dial starts at 50
-    let mut seq = vec![pos];
+    const DIAL_SIZE: i32 = 100;
+    const START_POS: i32 = 50;
 
-    for line in input.lines() {
-        let m = DialMove::from(line);
-        let step: i32 = if m.dir == Direction::Left { -1 } else { 1 };
-        for _ in 0..m.count {
-            pos = (pos + step).rem_euclid(DIAL_SIZE);
-            seq.push(pos);
-        }
-    }
+    let moves = input.lines().flat_map(|line| {
+        let m = DialTurn::from(line);
+        std::iter::repeat_with(move || DialTurn {
+            dir: m.dir,
+            count: 1,
+        })
+        .take(m.count as usize)
+    });
 
-    seq.into_iter().filter(|x| *x == 0).count() as i32
+    dial_seq(START_POS, DIAL_SIZE, moves)
+        .iter()
+        .filter(|x| **x == 0)
+        .count() as i32
 }
