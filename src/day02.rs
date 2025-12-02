@@ -28,12 +28,11 @@ impl IdRange {
                 .filter(|i| {
                     let i_str = i.to_string();
                     let i_bytes = i_str.as_bytes();
-                    (1..=i_str.len() / 2)
-                        .map(|chunk_size| i_bytes.chunks(chunk_size))
-                        .any(|mut collection| {
-                            let first = collection.nth(0);
-                            collection.all(|c| Some(c) == first)
-                        })
+                    (1..=i_str.len() / 2).any(|chunk_size| {
+                        let mut chunks = i_bytes.chunks(chunk_size);
+                        let first = chunks.next();
+                        chunks.all(|c| Some(c) == first)
+                    })
                 })
                 .sum(),
         }
