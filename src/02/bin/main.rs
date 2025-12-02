@@ -36,7 +36,8 @@ impl IdRange {
                     // Alternate solution, thanks @5ak1r, I'm unsure which is actually faster
                     // Duplicate the string (i_str + i_str), drop the first and last chars, check if the original i_str is present
                     // let i_str = i.to_string();
-                    // i_str.repeat(2)[1..=(i_str.len() * 2 - 2)].contains(&i_str)
+                    // let ii_str = i_str.repeat(2);
+                    // ii_str[1..=ii_str.len() - 2].contains(&i_str)
                 })
                 .sum(),
         }
@@ -76,8 +77,8 @@ pub fn part_2(input: &str) -> i64 {
 }
 
 fn main() {
-    let input = std::fs::read_to_string("input/02.example").unwrap();
-    // let input = std::fs::read_to_string("input/02.in").unwrap();
+    // let input = std::fs::read_to_string("input/02.example").unwrap();
+    let input = std::fs::read_to_string("input/02.in").unwrap();
     println!("Part 1: {}", part_1(&input));
     println!("Part 2: {}", part_2(&input));
 }
