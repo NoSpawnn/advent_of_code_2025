@@ -23,16 +23,20 @@ impl IdRange {
                     i_bytes[half..] == i_bytes[..half]
                 })
                 .sum(),
-            // For part 2, we need to check any possible combination of groupings
             ValidationMode::AtLeast => (self.start..=self.end)
                 .filter(|i| {
                     let i_str = i.to_string();
                     let i_bytes = i_str.as_bytes();
                     (1..=i_str.len() / 2).any(|chunk_size| {
                         let mut chunks = i_bytes.chunks(chunk_size);
-                        let first = chunks.next();
-                        chunks.all(|c| Some(c) == first)
+                        let first = chunks.next().unwrap(); // this'll never be empty
+                        chunks.all(|c| c == first)
                     })
+
+                    // Alternate solution, thanks @5ak1r, I'm unsure which is actually faster
+                    // Duplicate the string (i_str + i_str), drop the first and last chars, check if the original i_str is present
+                    // let i_str = i.to_string();
+                    // i_str.repeat(2)[1..=(i_str.len() * 2 - 2)].contains(&i_str)
                 })
                 .sum(),
         }
@@ -72,7 +76,8 @@ pub fn part_2(input: &str) -> i64 {
 }
 
 fn main() {
-    let input = std::fs::read_to_string("input/02.in").unwrap();
+    let input = std::fs::read_to_string("input/02.example").unwrap();
+    // let input = std::fs::read_to_string("input/02.in").unwrap();
     println!("Part 1: {}", part_1(&input));
     println!("Part 2: {}", part_2(&input));
 }
