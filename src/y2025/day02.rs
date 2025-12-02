@@ -57,16 +57,27 @@ impl From<&str> for IdRange {
     }
 }
 
-pub fn part_1(input: &str) -> i64 {
-    input
-        .split(',')
-        .map(IdRange::from)
-        .fold(0i64, |acc, r| acc + r.sum_invalid(ValidationMode::Exact))
-}
+pub struct Day02;
+impl crate::meta::Solution for Day02 {
+    const YEAR: u16 = 2025;
+    const PROBLEM_NO: u16 = 2;
+    const NAME: &str = "Gift Shop";
 
-pub fn part_2(input: &str) -> i64 {
-    input
-        .split(',')
-        .map(IdRange::from)
-        .fold(0i64, |acc, r| acc + r.sum_invalid(ValidationMode::AtLeast))
+    fn part_1(input_type: &crate::meta::InputType) -> Option<Box<dyn crate::meta::Answer>> {
+        let input = Self::read_input(input_type);
+        let ans = input
+            .split(',')
+            .map(IdRange::from)
+            .fold(0i64, |acc, r| acc + r.sum_invalid(ValidationMode::Exact));
+        Some(Box::new(ans))
+    }
+
+    fn part_2(input_type: &crate::meta::InputType) -> Option<Box<dyn crate::meta::Answer>> {
+        let input = Self::read_input(input_type);
+        let ans = input
+            .split(',')
+            .map(IdRange::from)
+            .fold(0i64, |acc, r| acc + r.sum_invalid(ValidationMode::AtLeast));
+        Some(Box::new(ans))
+    }
 }
