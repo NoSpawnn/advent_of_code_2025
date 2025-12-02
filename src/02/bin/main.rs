@@ -70,3 +70,9 @@ pub fn part_2(input: &str) -> i64 {
         .map(IdRange::from)
         .fold(0i64, |acc, r| acc + r.sum_invalid(ValidationMode::AtLeast))
 }
+
+fn main() {
+    let input = std::fs::read_to_string("input/02.in").unwrap();
+    println!("Part 1: {}", part_1(&input));
+    println!("Part 2: {}", part_2(&input));
+}
