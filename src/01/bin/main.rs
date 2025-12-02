@@ -1,5 +1,8 @@
 // https://adventofcode.com/2025/day/1
 
+const DIAL_SIZE: i32 = 100;
+const START_POS: i32 = 50;
+
 #[derive(Debug, Clone, Copy)]
 enum Direction {
     Left,
@@ -16,9 +19,9 @@ impl From<&str> for DialTurn {
     fn from(value: &str) -> Self {
         let mut chars = value.chars();
 
-        let dir = match chars.next().unwrap() {
-            'L' => Direction::Left,
-            'R' => Direction::Right,
+        let dir = match chars.next() {
+            Some('L') => Direction::Left,
+            Some('R') => Direction::Right,
             _ => panic!("Invalid input: {value}"),
         };
         let count = match chars.collect::<String>().parse::<i32>() {
@@ -41,15 +44,11 @@ fn dial_seq(
             Direction::Right => *state + m.count,
         }
         .rem_euclid(dial_size);
-
         Some(*state)
     })
 }
 
 pub fn part_1(input: &str) -> i32 {
-    const DIAL_SIZE: i32 = 100;
-    const START_POS: i32 = 50;
-
     let moves = input.lines().map(DialTurn::from);
     dial_seq(START_POS, DIAL_SIZE, moves)
         .filter(|x| *x == 0)
@@ -57,9 +56,6 @@ pub fn part_1(input: &str) -> i32 {
 }
 
 pub fn part_2(input: &str) -> i32 {
-    const DIAL_SIZE: i32 = 100;
-    const START_POS: i32 = 50;
-
     let moves = input.lines().flat_map(|line| {
         let m = DialTurn::from(line);
         std::iter::repeat_with(move || DialTurn {
