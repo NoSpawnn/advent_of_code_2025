@@ -14,7 +14,7 @@ enum ValidationMode {
 impl IdRange {
     fn sum_invalid(&self, mode: ValidationMode) -> i64 {
         match mode {
-            // For part 1, all we're doing is checking if the number is a palindrome (there's definitely a math way to do this)
+            // For part 1, all we're doing is checking if each half of the number (as a string) is equal
             ValidationMode::Exact => (self.start..=self.end)
                 .filter(|i| {
                     let i_str = i.to_string();
