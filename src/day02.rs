@@ -14,24 +14,25 @@ enum ValidationMode {
 impl IdRange {
     fn sum_invalid(&self, mode: ValidationMode) -> i64 {
         match mode {
-            // For part 1, all we're doing is checking if the number is a palindrome
+            // For part 1, all we're doing is checking if the number is a palindrome (there's definitely a math way to do this)
             ValidationMode::Exact => (self.start..=self.end)
                 .filter(|i| {
                     let i_str = i.to_string();
-                    let half = i_str.len() / 2;
-                    i_str.chars().take(half).eq(i_str.chars().skip(half))
+                    let i_bytes = i_str.as_bytes();
+                    let half = i_bytes.len() / 2;
+                    i_bytes[half..] == i_bytes[..half]
                 })
                 .sum(),
             // For part 2, we need to check any possible combination of groupings
             ValidationMode::AtLeast => (self.start..=self.end)
-                .filter(|i| *i >= 10)
                 .filter(|i| {
                     let i_str = i.to_string();
+                    let i_bytes = i_str.as_bytes();
                     (1..=i_str.len() / 2)
-                        .map(|chunk_size| i_str.as_bytes().chunks(chunk_size))
+                        .map(|chunk_size| i_bytes.chunks(chunk_size))
                         .any(|mut collection| {
-                            let first = collection.nth(0).unwrap();
-                            collection.all(|c| c == first)
+                            let first = collection.nth(0);
+                            collection.all(|c| Some(c) == first)
                         })
                 })
                 .sum(),
