@@ -17,18 +17,18 @@ impl IdRange {
                 continue;
             }
 
-            let mut p2: usize = 1;
+            let mut pointer: usize = 1;
             loop {
-                let pat = i_str.chars().take(p2);
-                let rest = i_str.chars().skip(p2);
+                let pat = i_str.chars().take(pointer);
+                let rest = i_str.chars().skip(pointer);
 
                 if rest.eq(pat) {
                     sum += i;
                     break;
                 }
 
-                p2 += 1;
-                if p2 > i_str.len() / 2 {
+                pointer += 1;
+                if pointer > i_str.len() / 2 {
                     break;
                 }
             }
