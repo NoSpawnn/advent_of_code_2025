@@ -22,32 +22,19 @@ impl IdRange {
                     i_str.chars().take(half).eq(i_str.chars().skip(half))
                 })
                 .sum(),
-            ValidationMode::AtLeast => {
-                let mut sum = 0i64;
-                for i in self.start..=self.end {
-                    // Single digits can't be invalid
-                    if i < 10 {
-                        continue;
-                    }
+            // For part 2, we need to check any possible combination of groupings
+            ValidationMode::AtLeast => (self.start..=self.end)
+                .filter(|i| *i >= 10)
+                .filter(|i| {
                     let i_str = i.to_string();
-                    let mut chunk_size = 1usize;
-                    loop {
-                        let mut chunks = i_str.as_bytes().chunks(chunk_size);
-                        let first = chunks.nth(0).unwrap();
-                        if chunks.all(|c| c == first) {
-                            sum += i;
-                            break;
-                        }
-
-                        chunk_size += 1;
-                        if chunk_size > i_str.len() / 2 {
-                            break;
-                        }
-                    }
-                }
-
-                sum
-            }
+                    (1..=i_str.len() / 2)
+                        .map(|chunk_size| i_str.as_bytes().chunks(chunk_size))
+                        .any(|mut collection| {
+                            let first = collection.nth(0).unwrap();
+                            collection.all(|c| c == first)
+                        })
+                })
+                .sum(),
         }
     }
 }
