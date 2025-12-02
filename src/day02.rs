@@ -22,35 +22,33 @@ impl IdRange {
                     i_str.chars().take(half).eq(i_str.chars().skip(half))
                 })
                 .sum(),
-            ValidationMode::AtLeast => todo!(),
+            ValidationMode::AtLeast => {
+                let mut sum = 0i64;
+                for i in self.start..=self.end {
+                    // Single digits can't be invalid
+                    if i < 10 {
+                        continue;
+                    }
+                    let i_str = i.to_string();
+                    let mut chunk_size = 1usize;
+                    loop {
+                        let mut chunks = i_str.as_bytes().chunks(chunk_size);
+                        let first = chunks.nth(0).unwrap();
+                        if chunks.all(|c| c == first) {
+                            sum += i;
+                            break;
+                        }
+
+                        chunk_size += 1;
+                        if chunk_size > i_str.len() / 2 {
+                            break;
+                        }
+                    }
+                }
+
+                sum
+            }
         }
-
-        // let mut sum = 0i64;
-        // for i in self.start..self.end + 1 {
-        //     let i_str = i.to_string();
-
-        //     let mut pointer: usize = 1;
-        //     loop {
-        //         let pat = i_str.chars().take(pointer);
-        //         let rest = i_str.chars().skip(pointer);
-
-        //         match mode {
-        //             ValidationMode::Exact => {
-        //                 if rest.eq(pat) {
-        //                     sum += i;
-        //                     break;
-        //                 }
-        //             }
-        //             ValidationMode::AtLeast => {}
-        //         }
-
-        //         pointer += 1;
-        //         if pointer > i_str.len() / 2 {
-        //             break;
-        //         }
-        //     }
-        // }
-        // sum
     }
 }
 
