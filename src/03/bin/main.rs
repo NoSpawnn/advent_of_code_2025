@@ -11,24 +11,10 @@ fn find_max_jolt(bank: &str, max_batteries: usize) -> i64 {
     let mut max_bank = String::from(bank);
 
     while max_bank.len() > max_batteries {
-        let mut removed = false;
-        let mut nums = max_bank
-            .chars()
-            .filter_map(|c| c.to_digit(10))
-            .enumerate()
-            .peekable();
-
-        while let Some((idx, cur)) = nums.next() {
-            if let Some((_, next)) = nums.peek()
-                && cur < *next
-            {
-                max_bank.remove(idx);
-                removed = true;
-                break;
-            }
-        }
-
-        if !removed {
+        // new function discovered
+        if let Some(idx) = max_bank.as_bytes().windows(2).position(|w| w[0] < w[1]) {
+            max_bank.remove(idx);
+        } else {
             max_bank.truncate(max_batteries);
             break;
         }
