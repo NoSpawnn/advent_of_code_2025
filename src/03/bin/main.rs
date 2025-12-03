@@ -3,12 +3,6 @@
 // each line of digits in your input corresponds to a single bank of batteries.
 // Within each bank, you need to turn on exactly two batteries
 
-#[derive(Debug)]
-struct MaxValue {
-    index: Option<usize>,
-    value: Option<u32>,
-}
-
 pub fn part_1(input: &str) -> u32 {
     let mut sum = 0;
 
