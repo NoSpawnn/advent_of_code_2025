@@ -1,84 +1,88 @@
+use std::collections::HashSet;
+
 const ROLL: char = '@';
+#[rustfmt::skip]
+const OFFSETS: [(isize, isize); 8] = [
+    (-1, -1), (-1, 0), (-1, 1),
+    ( 0, -1),          ( 0, 1),
+    ( 1, -1), ( 1, 0), ( 1, 1)
+];
 
-fn count_adjacent(grid: &[String], row: usize, col: usize) -> i32 {
-    let r_range: Vec<_> = {
-        if row == 0 {
-            row..=row + 1
-        } else if row == grid.len() - 1 {
-            row - 1..=row
-        } else {
-            row - 1..=row + 1
-        }
-    }
-    .collect();
-    let c_range: Vec<_> = {
-        if col == 0 {
-            col..=col + 1
-        } else if col == grid[0].len() - 1 {
-            col - 1..=col
-        } else {
-            col - 1..=col + 1
-        }
-    }
-    .collect();
-
-    let mut adjacent = 0;
-    for r_check in &r_range {
-        for c_check in &c_range {
-            if *r_check == row && *c_check == col {
-                continue;
+fn count_adjacent(grid: &HashSet<(usize, usize)>, row: usize, col: usize) -> i32 {
+    OFFSETS
+        .iter()
+        .filter(|(row_offset, col_offset)| {
+            if let Some(row_to_check) = (row as isize).checked_add(*row_offset)
+                && let Some(col_to_check) = (col as isize).checked_add(*col_offset)
+            {
+                let coord = (row_to_check as usize, col_to_check as usize);
+                grid.contains(&coord)
+            } else {
+                false
             }
-            if grid[*r_check].chars().nth(*c_check) == Some(ROLL) {
-                adjacent += 1;
-            }
-        }
-    }
-
-    adjacent
+        })
+        .count() as i32
 }
 
 pub fn part_1(input: &str) -> i32 {
-    let grid: Vec<String> = input.lines().map(str::to_owned).collect();
-    let mut accessible = 0;
+    let grid: HashSet<_> = input
+        .lines()
+        .enumerate()
+        .map(|(row_idx, row)| {
+            row.char_indices().filter_map(move |(col_idx, chr)| {
+                if chr == ROLL {
+                    Some((row_idx, col_idx))
+                } else {
+                    None
+                }
+            })
+        })
+        .flatten()
+        .collect();
 
-    for (r_idx, row) in grid.iter().enumerate() {
-        for (c_idx, _) in row.char_indices().filter(|(_, chr)| *chr == ROLL) {
-            if count_adjacent(&grid, r_idx, c_idx) < 4 {
-                accessible += 1
-            }
-        }
-    }
-
-    accessible
+    grid.iter()
+        .filter(|(row, col)| count_adjacent(&grid, *row, *col) < 4)
+        .count() as i32
 }
 
 pub fn part_2(input: &str) -> i32 {
-    let mut grid: Vec<String> = input.lines().map(String::from).collect();
-    let mut res = 0;
+    let mut grid: HashSet<_> = input
+        .lines()
+        .enumerate()
+        .map(|(row_idx, row)| {
+            row.char_indices().filter_map(move |(col_idx, chr)| {
+                if chr == ROLL {
+                    Some((row_idx, col_idx))
+                } else {
+                    None
+                }
+            })
+        })
+        .flatten()
+        .collect();
+    let start_len = grid.len();
 
     loop {
-        let mut removable = Vec::new();
-        for (r_idx, row) in grid.iter().enumerate() {
-            for (c_idx, _) in row.char_indices().filter(|(_, chr)| *chr == ROLL) {
-                if count_adjacent(&grid, r_idx, c_idx) < 4 {
-                    removable.push((r_idx, c_idx));
+        let old_len = grid.len();
+        let to_remove: Vec<_> = grid
+            .iter()
+            .filter_map(|(row, col)| {
+                if count_adjacent(&grid, *row, *col) < 4 {
+                    Some((*row, *col))
+                } else {
+                    None
                 }
-            }
+            })
+            .collect();
+
+        for coord in to_remove {
+            grid.remove(&coord);
         }
 
-        if removable.is_empty() {
-            break;
-        }
-
-        res += removable.len() as i32;
-        for (r_remove, c_remove) in removable {
-            let mut new: Vec<char> = grid[r_remove].chars().collect();
-            new[c_remove] = '.';
-            grid[r_remove] = new.iter().collect();
+        if old_len == grid.len() {
+            return (start_len - old_len) as i32;
         }
     }
-
-    res
 }
 
 fn main() {
