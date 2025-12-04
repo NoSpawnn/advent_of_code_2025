@@ -45,27 +45,40 @@ pub fn part_2(input: &str) -> i32 {
     let start_count = grid.count_by(|v| matches!(v, PaperRollState::Present));
 
     loop {
-        let new_values: Vec<_> = grid
+        let mut rolls_next = 0usize;
+        let next_values: Vec<_> = grid
             .values
             .iter()
             .enumerate()
-            .map(|(idx, _)| {
-                if matches!(grid.get_from_1d_index(idx), Some(PaperRollState::Present)) {
-                    match PaperRollState::count_adjacent_in_grid(&grid, idx) {
-                        0..4 => PaperRollState::Absent,
-                        _ => PaperRollState::Present,
-                    }
-                } else {
+            .map(|(idx, v)| {
+                let is_present = matches!(v, PaperRollState::Present);
+                let adj = PaperRollState::count_adjacent_in_grid(&grid, idx);
+
+                let next = if is_present && adj < 4 {
                     PaperRollState::Absent
+                } else {
+                    PaperRollState::Present
+                };
+
+                if matches!(next, PaperRollState::Present) {
+                    rolls_next += 1;
                 }
+
+                next
             })
             .collect();
-        let old_count = grid.count_by(|v| matches!(v, PaperRollState::Present));
-        grid.values = new_values;
-        let new_count = grid.count_by(|v| matches!(v, PaperRollState::Present));
-        if old_count == new_count {
-            return (start_count - old_count) as i32;
+
+        let rolls_now = grid
+            .values
+            .iter()
+            .filter(|v| matches!(v, PaperRollState::Present))
+            .count();
+
+        if rolls_now == rolls_next {
+            return start_count as i32 - rolls_now as i32;
         }
+
+        grid.values = next_values;
     }
 }
 
