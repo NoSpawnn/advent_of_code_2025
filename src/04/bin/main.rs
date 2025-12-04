@@ -7,6 +7,7 @@ const OFFSETS: [(isize, isize); 8] = [
     ( 0, -1),          ( 0, 1),
     ( 1, -1), ( 1, 0), ( 1, 1)
 ];
+type PaperRollCoords = HashSet<(usize, usize)>;
 
 fn count_adjacent(grid: &HashSet<(usize, usize)>, row: usize, col: usize) -> i32 {
     OFFSETS
@@ -24,8 +25,8 @@ fn count_adjacent(grid: &HashSet<(usize, usize)>, row: usize, col: usize) -> i32
         .count() as i32
 }
 
-pub fn part_1(input: &str) -> i32 {
-    let grid: HashSet<_> = input
+fn make_grid(lines: &str) -> PaperRollCoords {
+    lines
         .lines()
         .enumerate()
         .map(|(row_idx, row)| {
@@ -38,7 +39,11 @@ pub fn part_1(input: &str) -> i32 {
             })
         })
         .flatten()
-        .collect();
+        .collect()
+}
+
+pub fn part_1(input: &str) -> i32 {
+    let grid = make_grid(input);
 
     grid.iter()
         .filter(|(row, col)| count_adjacent(&grid, *row, *col) < 4)
@@ -46,20 +51,7 @@ pub fn part_1(input: &str) -> i32 {
 }
 
 pub fn part_2(input: &str) -> i32 {
-    let mut grid: HashSet<_> = input
-        .lines()
-        .enumerate()
-        .map(|(row_idx, row)| {
-            row.char_indices().filter_map(move |(col_idx, chr)| {
-                if chr == ROLL {
-                    Some((row_idx, col_idx))
-                } else {
-                    None
-                }
-            })
-        })
-        .flatten()
-        .collect();
+    let mut grid = make_grid(input);
     let start_len = grid.len();
 
     loop {
