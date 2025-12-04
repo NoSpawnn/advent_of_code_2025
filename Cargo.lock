@@ -5,3 +5,10 @@ version = 4
 [[package]]
 name = "aoc2025"
 version = "0.1.0"
+dependencies = [
+ "aoc_common",
+]
+
+[[package]]
+name = "aoc_common"
+version = "0.1.0"
