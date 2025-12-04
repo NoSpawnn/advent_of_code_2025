@@ -6,7 +6,7 @@ const OFFSETS: [(isize, isize); 8] = [
     ( 0, -1),          ( 0, 1),
     ( 1, -1), ( 1, 0), ( 1, 1)
 ];
-type PaperRollCoords = HashSet<(usize, usize)>;
+type PaperRollCoords = std::collections::HashSet<(usize, usize)>;
 
 fn count_adjacent(grid: &PaperRollCoords, row: usize, col: usize) -> i32 {
     OFFSETS
@@ -24,16 +24,10 @@ fn make_grid(lines: &str) -> PaperRollCoords {
     lines
         .lines()
         .enumerate()
-        .map(|(row_idx, row)| {
-            row.char_indices().filter_map(move |(col_idx, chr)| {
-                if chr == '@' {
-                    Some((row_idx, col_idx))
-                } else {
-                    None
-                }
-            })
+        .flat_map(|(row_idx, row)| {
+            row.char_indices()
+                .filter_map(move |(col_idx, chr)| (chr == '@').then(|| (row_idx, col_idx)))
         })
-        .flatten()
         .collect()
 }
 
