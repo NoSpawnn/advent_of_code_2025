@@ -19,7 +19,7 @@ fn parse_ranges(lines: &str) -> RangeVec {
     while let Some((existing_idx, [r0, r1])) = ranges
         .windows(2)
         .enumerate()
-        .find(|(_, w)| w[0].start() <= w[1].end() && w[1].start() <= w[0].end())
+        .find(|(_, pair)| pair[0].start() <= pair[1].end() && pair[1].start() <= pair[0].end())
     {
         ranges[existing_idx] = min(*r0.start(), *r1.start())..=max(*r0.end(), *r1.end());
         ranges.remove(existing_idx + 1);
