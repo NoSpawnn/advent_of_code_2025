@@ -1,10 +1,8 @@
 // https://adventofcode.com/2025/day/5
 
-use std::collections::HashSet;
-
 pub fn part_1(input: &str) -> i64 {
     let (ranges, ids) = input.split_once("\n\n").unwrap();
-    let ranges: HashSet<std::ops::RangeInclusive<i64>> = ranges
+    let ranges: Vec<std::ops::RangeInclusive<i64>> = ranges
         .lines()
         .map(|r| {
             let (start, end) = r.split_once('-').unwrap();
