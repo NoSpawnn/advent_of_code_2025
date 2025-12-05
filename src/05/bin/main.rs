@@ -13,6 +13,7 @@ fn parse_ranges(lines: &str) -> Vec<std::ops::RangeInclusive<i64>> {
         .collect();
     ranges.sort_by_key(|r| *r.start());
 
+    // Thanks https://stackoverflow.com/a/3269471
     while let Some((existing_idx, [w0, w1])) = ranges
         .windows(2)
         .enumerate()
@@ -25,31 +26,21 @@ fn parse_ranges(lines: &str) -> Vec<std::ops::RangeInclusive<i64>> {
     ranges
 }
 
-pub fn part_1(input: &str) -> i64 {
+pub fn part_1(input: &str) -> usize {
     let (ranges, ids) = input.split_once("\n\n").unwrap();
     let ranges = parse_ranges(ranges);
-    let mut fresh = 0;
-
-    for id in ids.lines() {
-        let id = id.parse::<i64>().unwrap();
-        if ranges.iter().any(|r| r.contains(&id)) {
-            fresh += 1
-        }
-    }
-
-    fresh
+    ids.lines()
+        .filter_map(|id| id.parse::<i64>().ok())
+        .filter(|id| ranges.iter().any(|r| r.contains(id)))
+        .count()
 }
 
 pub fn part_2(input: &str) -> i64 {
     let (ranges, _) = input.split_once("\n\n").unwrap();
-    let ranges = parse_ranges(ranges);
-
-    let mut fresh = 0;
-    for r in ranges {
-        fresh += r.count() as i64
-    }
-
-    fresh
+    parse_ranges(ranges)
+        .iter()
+        .map(|r| r.end() - r.start() + 1)
+        .sum()
 }
 
 fn main() {
