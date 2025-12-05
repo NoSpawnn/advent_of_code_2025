@@ -16,12 +16,12 @@ fn parse_ranges(lines: &str) -> RangeVec {
     ranges.sort_by_key(|r| *r.start());
 
     // Thanks https://stackoverflow.com/a/3269471
-    while let Some((existing_idx, [w0, w1])) = ranges
+    while let Some((existing_idx, [r0, r1])) = ranges
         .windows(2)
         .enumerate()
         .find(|(_, w)| w[0].start() <= w[1].end() && w[1].start() <= w[0].end())
     {
-        ranges[existing_idx] = min(*w0.start(), *w1.start())..=max(*w0.end(), *w1.end());
+        ranges[existing_idx] = min(*r0.start(), *r1.start())..=max(*r0.end(), *r1.end());
         ranges.remove(existing_idx + 1);
     }
 
