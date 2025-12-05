@@ -42,7 +42,16 @@ new_day DAY:
     fi
 
 bench DAY:
-    cargo b --bin {{ DAY }} --release && hyperfine ./target/release/{{ DAY }} --warmup 5
+    #!/usr/bin/env bash
+
+    DAY="$(printf '%02d' '{{ DAY }}')"
+
+    cargo b --bin ${DAY} --release
+    hyperfine ./target/release/${DAY} --warmup 5
 
 run DAY:
-    cargo r --release --bin {{ DAY }}
+    #!/usr/bin/env bash
+
+    DAY="$(printf '%02d' '{{ DAY }}')"
+
+    cargo r --release --bin ${DAY}
