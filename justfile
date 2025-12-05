@@ -5,12 +5,15 @@ new_day DAY:
     #!/usr/bin/env bash
     set -m
 
-    DAY="$(printf '%02d' '{{ DAY }}')"
-    DIR="src/${DAY}/bin"
+    DAY="$(printf '%d' '{{ DAY }}')"
+    DAY_PRETTY="$(printf '%02d' '{{ DAY }}')"
+    DIR="src/${DAY_PRETTY}"
     CARGO_TOML="Cargo.toml"
 
-    mkdir -p ${DIR}
-    cat <<EOF > ${DIR}/main.rs
+    mkdir -p ${DIR}/{bin,input}
+    cat <<EOF > ${DIR}/bin/main.rs
+    // https://adventofcode.com/2025/day/${DAY}
+
     pub fn part_1(input: &str) -> i32 {
         0
     }
@@ -20,11 +23,14 @@ new_day DAY:
     }
 
     fn main() {
-        let input = std::fs::read_to_string("input/${DAY}.example").unwrap();
+        let input = include_str!("../input/input.example");
+        // let input = include_str!("../input/real");
         println!("Part 1: {}", part_1(&input));
         println!("Part 2: {}", part_2(&input));
     }
     EOF
+
+    curl -s https://adventofcode.com/2025/day/${DAY}/input > ${DIR}/input/real
 
     if ! grep -q "name = \"${DAY}\"" $CARGO_TOML; then
     cat <<EOF >> "$CARGO_TOML"
