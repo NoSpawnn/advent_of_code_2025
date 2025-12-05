@@ -34,3 +34,6 @@ new_day DAY:
     path = "${DIR}/main.rs"
     EOF
     fi
+
+bench DAY:
+    cargo b --bin {{ DAY }} --release && hyperfine ./target/release/{{ DAY }} --warmup 5
