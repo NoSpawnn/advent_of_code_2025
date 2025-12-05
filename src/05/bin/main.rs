@@ -2,12 +2,14 @@
 
 use std::cmp::{max, min};
 
-fn parse_ranges(lines: &str) -> Vec<std::ops::RangeInclusive<i64>> {
-    let mut ranges: Vec<std::ops::RangeInclusive<i64>> = lines
+type RangeVec = Vec<std::ops::RangeInclusive<i64>>;
+
+fn parse_ranges(lines: &str) -> RangeVec {
+    let mut ranges: RangeVec = lines
         .lines()
         .map(|r| {
             let (start, end) = r.split_once('-').unwrap();
-            let (start, end): (i64, i64) = (start.parse().unwrap(), end.parse().unwrap());
+            let (start, end) = (start.parse().unwrap(), end.parse().unwrap());
             start..=end
         })
         .collect();
