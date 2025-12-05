@@ -37,3 +37,6 @@ new_day DAY:
 
 bench DAY:
     cargo b --bin {{ DAY }} --release && hyperfine ./target/release/{{ DAY }} --warmup 5
+
+run DAY:
+    cargo r --release --bin {{ DAY }}
