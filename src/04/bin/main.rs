@@ -2,65 +2,43 @@
 
 use aoc_common::Grid1D;
 
-#[derive(Debug, PartialEq, Eq)]
-enum PaperRollState {
-    Present,
-    Absent,
-}
-
-impl From<char> for PaperRollState {
-    fn from(value: char) -> Self {
-        match value {
-            '@' => Self::Present,
-            _ => Self::Absent,
-        }
-    }
-}
-
-impl PaperRollState {
-    fn count_adjacent_in_grid(grid: &Grid1D<Self>, idx: usize) -> i32 {
-        grid.count_adjacent_1d(idx, |row, col| {
-            matches!(
-                grid.get_from_2d_index(row, col),
-                Some(PaperRollState::Present)
-            )
-        })
-    }
-}
-
 pub fn part_1(input: &str) -> i32 {
-    let grid: Grid1D<PaperRollState> = Grid1D::from(input);
+    let grid: Grid1D<bool> = Grid1D::from_str(input, '@');
     grid.iter()
         .enumerate()
+        .filter(|(_, v)| **v)
         .filter(|(idx, _)| {
-            matches!(grid.get_from_1d_index(*idx), Some(PaperRollState::Present))
-                && PaperRollState::count_adjacent_in_grid(&grid, *idx) < 4
+            grid.count_adjacent_1d(*idx, |row, col| {
+                grid.get_from_2d_index(row, col).is_some_and(|s| *s)
+            }) < 4
         })
         .count() as i32
 }
 
 pub fn part_2(input: &str) -> i32 {
-    let mut grid: Grid1D<PaperRollState> = Grid1D::from(input);
-    let start_count = grid.count_by(|v| matches!(v, PaperRollState::Present));
+    let mut grid: Grid1D<bool> = Grid1D::from_str(input, '@');
+    let start_count = grid.count_by(|v| *v);
 
     loop {
         let new_values: Vec<_> = grid
             .iter()
             .enumerate()
             .map(|(idx, _)| {
-                if matches!(grid.get_from_1d_index(idx), Some(PaperRollState::Present)) {
-                    match PaperRollState::count_adjacent_in_grid(&grid, idx) {
-                        0..4 => PaperRollState::Absent,
-                        _ => PaperRollState::Present,
+                if grid.get_from_1d_index(idx).is_some_and(|s| *s) {
+                    match grid.count_adjacent_1d(idx, |row, col| {
+                        grid.get_from_2d_index(row, col).is_some_and(|s| *s)
+                    }) {
+                        0..4 => false,
+                        _ => true,
                     }
                 } else {
-                    PaperRollState::Absent
+                    false
                 }
             })
             .collect();
-        let old_count = grid.count_by(|v| matches!(v, PaperRollState::Present));
+        let old_count = grid.count_by(|v| *v);
         grid.values = new_values;
-        let new_count = grid.count_by(|v| matches!(v, PaperRollState::Present));
+        let new_count = grid.count_by(|v| *v);
         if old_count == new_count {
             return (start_count - old_count) as i32;
         }

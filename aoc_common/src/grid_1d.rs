@@ -24,6 +24,22 @@ where
     }
 }
 
+impl Grid1D<bool> {
+    pub fn from_str(value: &str, truthy: char) -> Self {
+        let lines: Vec<_> = value.lines().collect();
+        let values = value
+            .lines()
+            .flat_map(|row| row.chars().map(|c| c == truthy))
+            .collect();
+
+        Self {
+            values,
+            width: lines[0].len(),
+            height: lines.len(),
+        }
+    }
+}
+
 impl<T> Grid1D<T> {
     #[rustfmt::skip]
     const OFFSETS: [(isize, isize); 8] = [
