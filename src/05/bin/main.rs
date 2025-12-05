@@ -16,10 +16,11 @@ fn disjoint_ranges(lines: &str) -> RangeVec {
     ranges.sort_by_key(|r| *r.start());
 
     // Thanks https://stackoverflow.com/a/3269471
+    // We know pair[0].start() <= pair[1].end() holds since the vec is sorted
     while let Some((existing_idx, [r0, r1])) = ranges
         .windows(2)
         .enumerate()
-        .find(|(_, pair)| pair[0].start() <= pair[1].end() && pair[1].start() <= pair[0].end())
+        .find(|(_, pair)| pair[1].start() <= pair[0].end())
     {
         ranges[existing_idx] = min(*r0.start(), *r1.start())..=max(*r0.end(), *r1.end());
         ranges.remove(existing_idx + 1);
