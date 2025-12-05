@@ -4,7 +4,7 @@ use std::cmp::{max, min};
 
 type RangeVec = Vec<std::ops::RangeInclusive<i64>>;
 
-fn parse_ranges(lines: &str) -> RangeVec {
+fn disjoint_ranges(lines: &str) -> RangeVec {
     let mut ranges: RangeVec = lines
         .lines()
         .map(|r| {
@@ -30,7 +30,7 @@ fn parse_ranges(lines: &str) -> RangeVec {
 
 pub fn part_1(input: &str) -> usize {
     let (ranges, ids) = input.split_once("\n\n").unwrap();
-    let ranges = parse_ranges(ranges);
+    let ranges = disjoint_ranges(ranges);
     ids.lines()
         .filter_map(|id| id.parse::<i64>().ok())
         .filter(|id| ranges.iter().any(|r| r.contains(id)))
@@ -39,7 +39,7 @@ pub fn part_1(input: &str) -> usize {
 
 pub fn part_2(input: &str) -> i64 {
     let (ranges, _) = input.split_once("\n\n").unwrap();
-    parse_ranges(ranges)
+    disjoint_ranges(ranges)
         .iter()
         .map(|r| r.end() - r.start() + 1)
         .sum()
