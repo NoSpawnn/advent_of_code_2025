@@ -29,7 +29,6 @@ pub fn part_1(input: &str) -> i64 {
     let (ranges, ids) = input.split_once("\n\n").unwrap();
     let ranges = parse_ranges(ranges);
     let mut fresh = 0;
-    dbg!(&ranges);
 
     for id in ids.lines() {
         let id = id.parse::<i64>().unwrap();
