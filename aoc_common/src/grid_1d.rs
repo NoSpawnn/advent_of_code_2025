@@ -70,12 +70,7 @@ impl<T> Grid1D<T> {
         }
     }
 
-    pub fn count_adjacent_2d<F: Fn(usize, usize) -> bool>(
-        &self,
-        row: usize,
-        col: usize,
-        f: F,
-    ) -> i32 {
+    pub fn count_adjacent_2d<F: Fn(&T) -> bool>(&self, row: usize, col: usize, f: F) -> i32 {
         let res = Self::OFFSETS
             .iter()
             .filter(|(row_offset, col_offset)| {
@@ -90,14 +85,18 @@ impl<T> Grid1D<T> {
                     return false;
                 }
 
-                f(row_to_check as usize, col_to_check as usize)
+                let row_to_check = row_to_check as usize;
+                let col_to_check = col_to_check as usize;
+
+                let idx_1d = self.get_1d_index(row_to_check, col_to_check).unwrap();
+                f(&self.values[idx_1d])
             })
             .count() as i32;
 
         res
     }
 
-    pub fn count_adjacent_1d<F: Fn(usize, usize) -> bool>(&self, idx: usize, f: F) -> i32 {
+    pub fn count_adjacent_1d<F: Fn(&T) -> bool>(&self, idx: usize, f: F) -> i32 {
         let row = idx / self.width;
         let col = idx % self.width;
         self.count_adjacent_2d(row, col, f)

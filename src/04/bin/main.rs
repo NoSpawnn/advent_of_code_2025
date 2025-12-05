@@ -7,11 +7,7 @@ pub fn part_1(input: &str) -> i32 {
     grid.iter()
         .enumerate()
         .filter(|(_, v)| **v)
-        .filter(|(idx, _)| {
-            grid.count_adjacent_1d(*idx, |row, col| {
-                grid.get_from_2d_index(row, col).is_some_and(|s| *s)
-            }) < 4
-        })
+        .filter(|(idx, _)| grid.count_adjacent_1d(*idx, |value| *value) < 4)
         .count() as i32
 }
 
@@ -25,9 +21,7 @@ pub fn part_2(input: &str) -> i32 {
             .enumerate()
             .map(|(idx, _)| {
                 if grid.get_from_1d_index(idx).is_some_and(|s| *s) {
-                    match grid.count_adjacent_1d(idx, |row, col| {
-                        grid.get_from_2d_index(row, col).is_some_and(|s| *s)
-                    }) {
+                    match grid.count_adjacent_1d(idx, |value| *value) {
                         0..4 => false,
                         _ => true,
                     }
