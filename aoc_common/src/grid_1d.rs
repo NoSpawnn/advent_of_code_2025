@@ -94,4 +94,8 @@ impl<T> Grid1D<T> {
     pub fn len(&self) -> usize {
         self.values.len()
     }
+
+    pub fn iter(&self) -> std::slice::Iter<'_, T> {
+        self.values.iter()
+    }
 }

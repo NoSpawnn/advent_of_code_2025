@@ -30,8 +30,7 @@ impl PaperRollState {
 
 pub fn part_1(input: &str) -> i32 {
     let grid: Grid1D<PaperRollState> = Grid1D::from(input);
-    grid.values
-        .iter()
+    grid.iter()
         .enumerate()
         .filter(|(idx, _)| {
             matches!(grid.get_from_1d_index(*idx), Some(PaperRollState::Present))
@@ -46,7 +45,6 @@ pub fn part_2(input: &str) -> i32 {
 
     loop {
         let new_values: Vec<_> = grid
-            .values
             .iter()
             .enumerate()
             .map(|(idx, _)| {
