@@ -65,7 +65,7 @@ impl Problem {
 }
 
 fn get_column<'a>(lines: &'a [&str], col: &'a usize) -> impl Iterator<Item = char> {
-    lines.iter().map(|line| char::from(line.as_bytes()[*col]))
+    lines.iter().map(|line| char::from(line.as_bytes()[*col])) // Only works on ASCII strings, but that's fine
 }
 
 fn transpose<'a>(lines: &'a [&str]) -> impl Iterator<Item = String> {
