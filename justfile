@@ -15,12 +15,14 @@ new_day DAY:
     cat <<EOF > ${DIR}/main.rs
     // https://adventofcode.com/2025/day/${DAY}
 
-    pub fn part_1(input: &str) -> i32 {
-        todo!()
+    type Answer = i32;
+
+    pub fn part_1(input: &str) -> Answer {
+        todo!("day ${DAY} part 1")
     }
 
-    pub fn part_2(input: &str) -> i32 {
-        todo!()
+    pub fn part_2(input: &str) -> Answer {
+        todo!("day ${DAY} part 2")
     }
 
     fn main() {
