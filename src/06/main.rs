@@ -19,7 +19,7 @@ impl Problem {
         let op = lines[lines.len() - 1][col_from..col_to]
             .chars()
             .next()
-            .expect("operator line empty");
+            .expect("operator line should not be empty");
 
         if column_wise {
             let nums = transpose(&block)
