@@ -26,7 +26,7 @@ impl Problem {
                 .map(|col| col.trim().parse::<i64>().unwrap())
                 .collect();
 
-            return Problem { op, nums };
+            return Self { op, nums };
         }
 
         let nums = block
