@@ -44,7 +44,7 @@ impl Problem {
         let mut problems = Vec::with_capacity(1000); // there's 1000 problems on the real input, this is a 10-15µs time save
 
         for col in 0..col_end {
-            if get_column(&lines, &col).all(|c| c.is_whitespace()) {
+            if get_column(&lines, &col).all(char::is_whitespace) {
                 let problem = Self::parse_one(&lines, block_start, col, column_wise);
                 problems.push(problem);
                 block_start = col + 1;
