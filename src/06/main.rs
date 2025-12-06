@@ -58,7 +58,7 @@ impl Problem {
     fn aggregate_by_op(&self) -> Answer {
         match self.op {
             '*' => self.nums.iter().fold(1, |acc, n| acc * n),
-            '+' => self.nums.iter().sum::<i64>(),
+            '+' => self.nums.iter().sum(),
             _ => panic!("unknown operator {}", self.op),
         }
     }
