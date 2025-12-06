@@ -16,7 +16,7 @@ impl Problem {
             .map(move |line| &line[col_from..col_to])
             .collect();
 
-        let op = lines.last().expect("input empty")[col_from..col_to]
+        let op = lines[lines.len() - 1][col_from..col_to]
             .chars()
             .next()
             .expect("operator line empty");
