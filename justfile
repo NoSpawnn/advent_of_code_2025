@@ -1,7 +1,8 @@
 _default:
     @just --list
 
-new_day DAY:
+# Create source and input files for {{ DAY }}
+new DAY:
     #!/usr/bin/env bash
     set -m
 
@@ -45,14 +46,22 @@ new_day DAY:
     EOF
     fi
 
-bench DAY:
+# Benchmark {{ DAY }} with hyperfine in release mode
+bench DAY: (_build DAY)
     #!/usr/bin/env bash
 
     DAY="$(printf '%02d' '{{ DAY }}')"
 
-    cargo b --bin ${DAY} --release
     hyperfine ./target/release/${DAY} --warmup 5
 
+_build DAY MODE="release":
+    #!/usr/bin/env bash
+
+    DAY="$(printf '%02d' '{{ DAY }}')"
+
+    cargo b --bin ${DAY} --{{ MODE }}
+
+# Run {{ DAY }} in debug mode
 run DAY:
     #!/usr/bin/env bash
 
