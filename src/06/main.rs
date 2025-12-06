@@ -54,6 +54,14 @@ impl Problem {
         problems.push(Self::parse_one(&lines, block_start, col_end, column_wise));
         problems
     }
+
+    fn aggregate_by_op(&self) -> Answer {
+        match self.op {
+            '*' => self.nums.iter().fold(1, |acc, n| acc * n),
+            '+' => self.nums.iter().sum::<i64>(),
+            _ => panic!("unknown operator {}", self.op),
+        }
+    }
 }
 
 fn get_column<'a>(lines: &'a [&str], col: &'a usize) -> impl Iterator<Item = char> {
@@ -68,21 +76,15 @@ fn transpose<'a>(lines: &'a [&str]) -> impl Iterator<Item = String> {
 pub fn part_1(input: &str) -> Answer {
     Problem::parse_many(input, false)
         .iter()
-        .fold(0, |acc, problem| match problem.op {
-            '*' => acc + problem.nums.iter().fold(1, |acc, n| acc * n),
-            '+' => acc + problem.nums.iter().sum::<i64>(),
-            _ => panic!("unknown operator {}", problem.op),
-        })
+        .map(Problem::aggregate_by_op)
+        .sum()
 }
 
 pub fn part_2(input: &str) -> Answer {
     Problem::parse_many(input, true)
         .iter()
-        .fold(0, |acc, problem| match problem.op {
-            '*' => acc + problem.nums.iter().fold(1, |acc, n| acc * n),
-            '+' => acc + problem.nums.iter().sum::<i64>(),
-            _ => panic!("unknown operator {}", problem.op),
-        })
+        .map(Problem::aggregate_by_op)
+        .sum()
 }
 
 fn main() {
