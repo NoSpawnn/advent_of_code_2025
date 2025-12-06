@@ -5,38 +5,40 @@ new_day DAY:
     #!/usr/bin/env bash
     set -m
 
+    source .env
+
     DAY="$(printf '%d' '{{ DAY }}')"
     DAY_PRETTY="$(printf '%02d' '{{ DAY }}')"
     DIR="src/${DAY_PRETTY}"
     CARGO_TOML="Cargo.toml"
 
-    mkdir -p ${DIR}/{bin,input}
-    cat <<EOF > ${DIR}/bin/main.rs
+    cat <<EOF > ${DIR}/main.rs
     // https://adventofcode.com/2025/day/${DAY}
 
     pub fn part_1(input: &str) -> i32 {
-        0
+        todo!()
     }
 
     pub fn part_2(input: &str) -> i32 {
-        0
+        todo!()
     }
 
     fn main() {
-        let input = include_str!("../input/input.example");
-        // let input = include_str!("../input/real");
+        let input = include_str!("input/input.example");
+        // let input = include_str!("input/real");
         println!("Part 1: {}", part_1(&input));
         println!("Part 2: {}", part_2(&input));
     }
     EOF
 
-    curl -s https://adventofcode.com/2025/day/${DAY}/input > ${DIR}/input/real
+    mkdir -p ${DIR}/input
+    curl -s -H "Cookie: session=${AOC_SESSION_COOKIE}" https://adventofcode.com/2025/day/${DAY}/input > ${DIR}/input/real
 
     if ! grep -q "name = \"${DAY}\"" $CARGO_TOML; then
     cat <<EOF >> "$CARGO_TOML"
 
     [[bin]]
-    name = "${DAY}"
+    name = "${DAY_PRETTY}"
     path = "${DIR}/main.rs"
     EOF
     fi
