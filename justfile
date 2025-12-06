@@ -58,4 +58,4 @@ run DAY:
 
     DAY="$(printf '%02d' '{{ DAY }}')"
 
-    cargo r --release --bin ${DAY}
+    cargo r --bin ${DAY}
