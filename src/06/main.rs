@@ -69,8 +69,7 @@ fn get_column<'a>(lines: &'a [&str], col: &'a usize) -> impl Iterator<Item = cha
 }
 
 fn transpose<'a>(lines: &'a [&str]) -> impl Iterator<Item = String> {
-    let len = lines.first().unwrap().len();
-    (0..len).map(|col| get_column(lines, &col).collect())
+    (0..lines[0].len()).map(|col| get_column(lines, &col).collect())
 }
 
 pub fn part_1(input: &str) -> Answer {
