@@ -31,7 +31,7 @@ impl Problem {
 
         let nums = block
             .iter()
-            .map(|col| col.trim().parse::<i64>().unwrap())
+            .map(|col| col.trim().parse().unwrap())
             .collect();
 
         Self { op, nums }
