@@ -52,8 +52,7 @@ fn parse_problems<'a>(lines: &'a str, column_wise: bool) -> Vec<Problem> {
     let mut problems = Vec::with_capacity(1000); // There's 1000 problems on the real input, this is a 10-15µs time save
 
     for col in 0..col_end {
-        let column = get_column(&lines, &col).collect::<String>();
-        if column.trim().is_empty() {
+        if get_column(&lines, &col).all(|c| c.is_whitespace()) {
             let problem = parse_problem(&lines, block_start, col, column_wise);
             problems.push(problem);
             block_start = col + 1;
