@@ -8,32 +8,33 @@ struct Problem {
     nums: Vec<i64>,
 }
 
-fn get_column<'a>(lines: &'a [String], col: &'a usize) -> impl Iterator<Item = char> {
-    lines.iter().map(|line| line.chars().nth(*col).unwrap())
+fn get_column<'a>(lines: &'a [&str], col: &'a usize) -> impl Iterator<Item = char> {
+    lines.iter().map(|line| char::from(line.as_bytes()[*col]))
 }
 
-fn transpose(lines: &[String]) -> impl Iterator<Item = String> {
+fn transpose<'a>(lines: &'a [&str]) -> impl Iterator<Item = String> {
     let len = lines.first().unwrap().len();
     (0..len).map(|col| get_column(lines, &col).collect())
 }
 
-fn parse_problem(lines: &[String], col_from: usize, col_to: usize, column_wise: bool) -> Problem {
+fn parse_problem(lines: &[&str], col_from: usize, col_to: usize, column_wise: bool) -> Problem {
     let mut block: Vec<_> = lines
         .iter()
-        .map(move |line| {
-            line.chars()
-                .skip(col_from)
-                .take(col_to - col_from)
-                .collect::<String>()
-        })
+        .map(move |line| &line[col_from..col_to])
         .collect();
+    block.drain(block.len() - 1..);
 
-    let op = block.last().unwrap().chars().nth(0).unwrap();
+    let op = lines.last().expect("input empty")[col_from..col_to]
+        .chars()
+        .next()
+        .expect("operator line empty");
 
     if column_wise {
-        block = transpose(&block[..block.len() - 1]).collect();
-    } else {
-        block.drain(block.len() - 1..);
+        let nums = transpose(&block)
+            .map(|col| col.trim().parse::<i64>().unwrap())
+            .collect();
+
+        return Problem { op, nums };
     }
 
     let nums = block
@@ -45,7 +46,7 @@ fn parse_problem(lines: &[String], col_from: usize, col_to: usize, column_wise: 
 }
 
 fn parse_problems<'a>(lines: &'a str, column_wise: bool) -> Vec<Problem> {
-    let lines: Vec<_> = lines.lines().map(str::to_owned).collect();
+    let lines: Vec<_> = lines.lines().collect();
     let col_end = lines[0].len();
     let mut block_start = 0;
     let mut problems = Vec::new();
@@ -74,12 +75,13 @@ pub fn part_1(input: &str) -> Answer {
 }
 
 pub fn part_2(input: &str) -> Answer {
-    let problems = parse_problems(input, true);
-    problems.iter().fold(0, |acc, problem| match problem.op {
-        '*' => acc + problem.nums.iter().fold(1, |acc, n| acc * n),
-        '+' => acc + problem.nums.iter().sum::<i64>(),
-        _ => panic!("unknown operator {}", problem.op),
-    })
+    parse_problems(input, true)
+        .iter()
+        .fold(0, |acc, problem| match problem.op {
+            '*' => acc + problem.nums.iter().fold(1, |acc, n| acc * n),
+            '+' => acc + problem.nums.iter().sum::<i64>(),
+            _ => panic!("unknown operator {}", problem.op),
+        })
 }
 
 fn main() {
