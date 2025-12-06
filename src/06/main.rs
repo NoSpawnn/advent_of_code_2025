@@ -2,52 +2,83 @@
 
 type Answer = i64;
 
-pub fn part_1(input: &str) -> Answer {
-    let mut operands: Vec<Vec<Answer>> = Vec::new();
-    let mut operators: Option<Vec<char>> = None;
+struct Problem {
+    op: char,
+    nums: Vec<i64>,
+}
 
-    for line in input.lines() {
-        if line.chars().next().is_some_and(|c| matches!(c, '*' | '+')) {
-            operators = Some(line.split_whitespace().flat_map(|s| s.chars()).collect());
-            break;
-        } else {
-            for (idx, n) in line
-                .split_whitespace()
-                .map(|s| s.parse().unwrap())
-                .enumerate()
-            {
-                if let Some(v) = operands.get_mut(idx) {
-                    v.push(n);
-                } else {
-                    operands.push(Vec::from([n]));
-                }
-            }
+fn get_column<'a>(lines: &'a [String], col: &'a usize) -> impl Iterator<Item = char> {
+    lines.iter().map(|line| line.chars().nth(*col).unwrap())
+}
+
+fn transpose(lines: &[String]) -> impl Iterator<Item = String> {
+    let len = lines.first().unwrap().len();
+    (0..len).map(|col| get_column(lines, &col).collect())
+}
+
+fn parse_problem(lines: &[String], col_from: usize, col_to: usize) -> impl Iterator<Item = String> {
+    lines.iter().map(move |line| {
+        line.chars()
+            .skip(col_from)
+            .take(col_to - col_from)
+            .collect()
+    })
+}
+
+fn parse_problems<'a>(lines: &'a str) -> Vec<Vec<String>> {
+    let lines: Vec<_> = lines.lines().map(str::to_owned).collect();
+    let col_end = lines[0].len();
+    let mut block_start = 0;
+    let mut problems = Vec::new();
+
+    for col in 0..col_end {
+        let column = get_column(&lines, &col).collect::<String>();
+        if column.trim().is_empty() {
+            let problem_lines = parse_problem(&lines, block_start, col);
+            problems.push(problem_lines.collect());
+            block_start = col + 1;
         }
     }
 
-    if operators.is_none() {
-        panic!("Didn't find operators line");
-    }
+    problems.push(parse_problem(&lines, block_start, col_end).collect());
+    problems
+}
 
-    let operators = operators.unwrap();
-
-    let mut ans = 0;
-    for (operands, operator) in operands.iter().zip(operators) {
-        ans += operands
+pub fn part_1(input: &str) -> Answer {
+    parse_problems(input).iter().fold(0, |acc, problem| {
+        let op = problem.last().unwrap().chars().nth(0).unwrap();
+        let nums = problem[..problem.len() - 1]
             .iter()
-            .skip(1)
-            .fold(operands[0], |acc, next| match operator {
-                '*' => acc * next,
-                '+' => acc + next,
-                _ => panic!("Unknown operator"),
-            });
-    }
-
-    ans
+            .map(|col| col.trim().parse::<i64>().unwrap());
+        match op {
+            '*' => acc + nums.fold(1, |acc, n| acc * n),
+            '+' => acc + nums.sum::<i64>(),
+            _ => panic!("unknown operator {}", op),
+        }
+    })
 }
 
 pub fn part_2(input: &str) -> Answer {
-    todo!()
+    let problems = parse_problems(input);
+    problems
+        .iter()
+        .map(|p| transpose(&p).peekable())
+        .fold(0, |acc, mut problem| {
+            let op = problem.peek().unwrap().chars().last().unwrap();
+            let nums = problem.map(|col| {
+                col.chars()
+                    .take(col.len() - 1)
+                    .collect::<String>()
+                    .trim()
+                    .parse::<i64>()
+                    .unwrap()
+            });
+            match op {
+                '*' => acc + nums.fold(1, |acc, n| acc * n),
+                '+' => acc + nums.sum::<i64>(),
+                _ => panic!("unknown operator {}", op),
+            }
+        })
 }
 
 fn main() {
