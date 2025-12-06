@@ -22,7 +22,7 @@ fn find_max_jolt(bank: &str, max_batteries: usize) -> i64 {
 
     max_bank
         .parse::<i64>()
-        .unwrap_or_else(|_| panic!("Input is invalid, got: {}", max_bank))
+        .expect("input should be only digits")
 }
 
 pub fn part_1(input: &str) -> i64 {
