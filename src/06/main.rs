@@ -18,11 +18,11 @@ fn transpose<'a>(lines: &'a [&str]) -> impl Iterator<Item = String> {
 }
 
 fn parse_problem(lines: &[&str], col_from: usize, col_to: usize, column_wise: bool) -> Problem {
-    let mut block: Vec<_> = lines
+    let block: Vec<_> = lines
         .iter()
+        .take(lines.len() - 1) // we care not about the last line for numbers parsing
         .map(move |line| &line[col_from..col_to])
         .collect();
-    block.drain(block.len() - 1..);
 
     let op = lines.last().expect("input empty")[col_from..col_to]
         .chars()
