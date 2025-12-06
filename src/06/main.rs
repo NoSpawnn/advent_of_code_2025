@@ -49,7 +49,7 @@ fn parse_problems<'a>(lines: &'a str, column_wise: bool) -> Vec<Problem> {
     let lines: Vec<_> = lines.lines().collect();
     let col_end = lines[0].len();
     let mut block_start = 0;
-    let mut problems = Vec::new();
+    let mut problems = Vec::with_capacity(1000); // There's 1000 problems on the real input, this is a 10-15µs time save
 
     for col in 0..col_end {
         let column = get_column(&lines, &col).collect::<String>();
