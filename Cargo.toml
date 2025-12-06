@@ -8,23 +8,23 @@ aoc_common = { path = "./aoc_common" }
 
 [[bin]]
 name = "01"
-path = "src/01/bin/main.rs"
+path = "src/01/main.rs"
 
 [[bin]]
 name = "02"
-path = "src/02/bin/main.rs"
+path = "src/02/main.rs"
 
 [[bin]]
 name = "03"
-path = "src/03/bin/main.rs"
+path = "src/03/main.rs"
 
 [[bin]]
 name = "04"
-path = "src/04/bin/main.rs"
+path = "src/04/main.rs"
 
 [[bin]]
 name = "05"
-path = "src/05/bin/main.rs"
+path = "src/05/main.rs"
 
 [[bin]]
 name = "06"

@@ -40,8 +40,8 @@ pub fn part_2(input: &str) -> i32 {
 }
 
 fn main() {
-    // let input = include_str!("../input/example");
-    let input = include_str!("../input/real");
+    // let input = include_str!("input//example");
+    let input = include_str!("input//real");
     println!("Part 1: {}", part_1(&input));
     println!("Part 2: {}", part_2(&input));
 }
