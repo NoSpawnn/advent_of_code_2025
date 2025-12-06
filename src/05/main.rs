@@ -22,7 +22,9 @@ fn disjoint_ranges(lines: &str) -> RangeVec {
         .enumerate()
         .find(|(_, pair)| pair[1].start() <= pair[0].end())
     {
-        ranges[existing_idx] = min(*r0.start(), *r1.start())..=max(*r0.end(), *r1.end());
+        let start = min(*r0.start(), *r1.start());
+        let end = max(*r0.end(), *r1.end());
+        ranges[existing_idx] = start..=end;
         ranges.remove(existing_idx + 1);
     }
 
