@@ -1,6 +1,6 @@
 // https://adventofcode.com/2025/day/7
 
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 type Answer = usize;
 type Coord = (usize, usize);
@@ -56,12 +56,30 @@ pub fn part_1(input: &str) -> Answer {
 }
 
 pub fn part_2(input: &str) -> Answer {
-    todo!("day 7 part 2")
+    let mut lines = input.lines();
+    let mut beams: Vec<_> = lines
+        .next()
+        .expect("input should not be empty")
+        .chars()
+        .map(|c| if c == 'S' { 1 } else { 0 })
+        .collect();
+
+    while let Some(line) = lines.next() {
+        for (i, c) in line.as_bytes().iter().enumerate() {
+            if *c == b'^' {
+                beams[i - 1] += beams[i];
+                beams[i + 1] += beams[i];
+                beams[i] = 0;
+            }
+        }
+    }
+
+    beams.iter().sum()
 }
 
 fn main() {
     // let input = include_str!("input/example");
     let input = include_str!("input/real");
     println!("Part 1: {}", part_1(&input));
-    // println!("Part 2: {}", part_2(&input));
+    println!("Part 2: {}", part_2(&input));
 }
