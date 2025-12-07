@@ -51,6 +51,6 @@ pub fn part_2(input: &str) -> Answer {
 fn main() {
     // let input = include_str!("input/example");
     let input = include_str!("input/real");
-    // println!("Part 1: {}", part_1(&input));
+    println!("Part 1: {}", part_1(&input));
     println!("Part 2: {}", part_2(&input));
 }
