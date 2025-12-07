@@ -2,22 +2,21 @@
 
 type Answer = usize;
 
+fn init_beams(line: &str) -> Vec<usize> {
+    line.chars().map(|c| if c == 'S' { 1 } else { 0 }).collect()
+}
+
 pub fn part_1(input: &str) -> Answer {
     let mut lines = input.lines();
     let mut splits = 0;
-    let mut beams: Vec<bool> = lines
-        .next()
-        .expect("input should not be empty")
-        .chars()
-        .map(|c| c == 'S')
-        .collect();
+    let mut beams = init_beams(&lines.next().unwrap());
 
     while let Some(line) = lines.next() {
         for (i, c) in line.chars().enumerate() {
-            if c == '^' && beams[i] {
-                beams[i - 1] = true;
-                beams[i + 1] = true;
-                beams[i] = false;
+            if c == '^' && beams[i] == 1 {
+                beams[i - 1] = 1;
+                beams[i + 1] = 1;
+                beams[i] = 0;
                 splits += 1;
             }
         }
@@ -28,12 +27,7 @@ pub fn part_1(input: &str) -> Answer {
 
 pub fn part_2(input: &str) -> Answer {
     let mut lines = input.lines();
-    let mut beams: Vec<_> = lines
-        .next()
-        .expect("input should not be empty")
-        .chars()
-        .map(|c| if c == 'S' { 1 } else { 0 })
-        .collect();
+    let mut beams = init_beams(&lines.next().unwrap());
 
     while let Some(line) = lines.next() {
         for (i, c) in line.chars().enumerate() {
