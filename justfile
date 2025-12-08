@@ -13,6 +13,8 @@ new DAY:
     DIR="src/${DAY_PRETTY}"
     CARGO_TOML="Cargo.toml"
 
+    mkdir ${DIR}
+
     cat <<EOF > ${DIR}/main.rs
     // https://adventofcode.com/2025/day/${DAY}
 
@@ -34,10 +36,10 @@ new DAY:
     }
     EOF
 
-    mkdir -p ${DIR}/input
+    mkdir ${DIR}/input
     curl -s -H "Cookie: session=${AOC_SESSION_COOKIE}" https://adventofcode.com/2025/day/${DAY}/input > ${DIR}/input/real
 
-    if ! grep -q "name = \"${DAY}\"" $CARGO_TOML; then
+    if ! grep -q "name = \"${DAY_PRETTY}\"" $CARGO_TOML; then
     cat <<EOF >> "$CARGO_TOML"
 
     [[bin]]
