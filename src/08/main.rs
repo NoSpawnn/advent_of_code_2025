@@ -132,12 +132,10 @@ pub fn part_2(input: &str) -> Answer {
         d1.total_cmp(&d2)
     });
 
-    let mut iter = possible_connections.iter();
-    let first = iter.next().unwrap();
-    let mut circuits: Vec<Vec<&JunctionBox>> = vec![vec![first.1, first.0]];
+    let mut circuits: Vec<Vec<&JunctionBox>> = Vec::new();
     let mut last: Option<(&JunctionBox, &JunctionBox)> = None;
 
-    for (from, to) in iter.cycle() {
+    for (from, to) in possible_connections.iter().cycle() {
         find_circuits(from, to, &mut circuits);
         if circuits[0].len() == junction_boxes.len() {
             last = Some((from, to));
