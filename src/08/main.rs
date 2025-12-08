@@ -11,13 +11,12 @@ struct JunctionBox {
 
 impl From<&str> for JunctionBox {
     fn from(value: &str) -> Self {
-        let coords: Vec<&str> = value.splitn(3, ',').collect();
-        assert!(coords.len() == 3, "input was not of the form 'x,y,z'");
-
-        let x = coords[0].parse().expect("x should be numeric");
-        let y = coords[1].parse().expect("y should be numeric");
-        let z = coords[2].parse().expect("z should be numeric");
-
+        let [x, y, z] = value
+            .splitn(3, ',')
+            .map(|p| p.parse().unwrap())
+            .collect::<Vec<_>>()
+            .try_into()
+            .unwrap();
         Self { x, y, z }
     }
 }
