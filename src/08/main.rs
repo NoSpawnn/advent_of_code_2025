@@ -30,9 +30,7 @@ impl JunctionBox {
         let x = self.x.abs_diff(other.x).pow(2);
         let y = self.y.abs_diff(other.y).pow(2);
         let z = self.z.abs_diff(other.z).pow(2);
-        let i = (x + y + z) as f32;
-        let distance = i.sqrt();
-        distance
+        (x + y + z) as f32
     }
 
     fn euclid_distance_to_closest<'a>(&self, other: &'a [JunctionBox]) -> f32 {
