@@ -51,6 +51,50 @@ impl JunctionBox {
     }
 }
 
+fn find_circuits<'a>(
+    from: &'a JunctionBox,
+    to: &'a JunctionBox,
+    circuits: &mut Vec<Vec<&'a JunctionBox>>,
+) {
+    let circuit_contains_from = circuits
+        .iter()
+        .enumerate()
+        .find(|(_, circuit)| circuit.contains(&from))
+        .map(|(idx, _)| idx);
+    let circuit_contains_to = circuits
+        .iter()
+        .enumerate()
+        .find(|(_, circuit)| circuit.contains(&to))
+        .map(|(idx, _)| idx);
+
+    match (circuit_contains_from, circuit_contains_to) {
+        (Some(from_idx), Some(to_idx)) if from_idx != to_idx => {
+            // connect 2 circuits
+            let from = circuits.remove(from_idx.max(to_idx));
+            let to = circuits.remove(from_idx.min(to_idx));
+            let new = from.into_iter().chain(to.into_iter()).collect();
+            circuits.push(new);
+        }
+        (Some(_), Some(_)) => {
+            // already in the same circuit, do nothing
+        }
+        (Some(from_idx), None) => {
+            // extend circuit
+            let circuit = circuits.get_mut(from_idx).unwrap();
+            circuit.push(to);
+        }
+        (None, Some(to_idx)) => {
+            // extend circuit
+            let circuit = circuits.get_mut(to_idx).unwrap();
+            circuit.push(from);
+        }
+        (None, None) => {
+            // new circuit
+            circuits.push(Vec::from([from, to]));
+        }
+    }
+}
+
 pub fn part_1(input: &str) -> Answer {
     const N_CONNECTIONS: usize = 1000;
     let junction_boxes: Vec<_> = input.lines().map(JunctionBox::from).collect();
@@ -67,43 +111,7 @@ pub fn part_1(input: &str) -> Answer {
     let mut circuits: Vec<Vec<&JunctionBox>> = Vec::new();
 
     for (from, to) in possible_connections.iter().take(N_CONNECTIONS) {
-        let circuit_contains_from = circuits
-            .iter()
-            .enumerate()
-            .find(|(_, circuit)| circuit.contains(from))
-            .map(|(idx, _)| idx);
-        let circuit_contains_to = circuits
-            .iter()
-            .enumerate()
-            .find(|(_, circuit)| circuit.contains(to))
-            .map(|(idx, _)| idx);
-
-        match (circuit_contains_from, circuit_contains_to) {
-            (Some(from_idx), Some(to_idx)) if from_idx != to_idx => {
-                // connect 2 circuits
-                let from = circuits.remove(from_idx.max(to_idx));
-                let to = circuits.remove(from_idx.min(to_idx));
-                let new = from.into_iter().chain(to.into_iter()).collect();
-                circuits.push(new);
-            }
-            (Some(_), Some(_)) => {
-                // already in the same circuit, do nothing
-            }
-            (Some(from_idx), None) => {
-                // extend circuit
-                let circuit = circuits.get_mut(from_idx).unwrap();
-                circuit.push(to);
-            }
-            (None, Some(to_idx)) => {
-                // extend circuit
-                let circuit = circuits.get_mut(to_idx).unwrap();
-                circuit.push(from);
-            }
-            (None, None) => {
-                // new circuit
-                circuits.push(Vec::from([*from, *to]));
-            }
-        }
+        find_circuits(from, to, &mut circuits);
     }
 
     // sort descending by length
@@ -112,12 +120,38 @@ pub fn part_1(input: &str) -> Answer {
 }
 
 pub fn part_2(input: &str) -> Answer {
-    todo!("day 8 part 2")
+    let junction_boxes: Vec<_> = input.lines().map(JunctionBox::from).collect();
+    let mut possible_connections: Vec<_> = junction_boxes
+        .iter()
+        .enumerate()
+        .flat_map(|(i, j1)| junction_boxes[i + 1..].iter().map(move |j2| (j1, j2)))
+        .collect();
+    possible_connections.sort_by(|j1, j2| {
+        let d1 = j1.0.euclid_distance_to(j1.1);
+        let d2 = j2.0.euclid_distance_to(j2.1);
+        d1.total_cmp(&d2)
+    });
+
+    let mut iter = possible_connections.iter();
+    let first = iter.next().unwrap();
+    let mut circuits: Vec<Vec<&JunctionBox>> = vec![vec![first.1, first.0]];
+    let mut last: Option<(&JunctionBox, &JunctionBox)> = None;
+
+    for (from, to) in iter.cycle() {
+        find_circuits(from, to, &mut circuits);
+        if circuits[0].len() == junction_boxes.len() {
+            last = Some((from, to));
+            break;
+        }
+    }
+
+    let last = last.unwrap();
+    last.0.x * last.1.x
 }
 
 fn main() {
     // let input = include_str!("input/example");
     let input = include_str!("input/real");
     println!("Part 1: {}", part_1(&input));
-    // println!("Part 2: {}", part_2(&input));
+    println!("Part 2: {}", part_2(&input));
 }
