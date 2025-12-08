@@ -26,11 +26,11 @@ impl JunctionBox {
     // but we store the square distance to save sqrt() computation
     // https://math.stackexchange.com/questions/42640/calculate-distance-in-3d-space
     //   namely https://math.stackexchange.com/a/1069627
-    fn euclid_distance_to(&self, other: &JunctionBox) -> f32 {
+    fn euclid_distance_to(&self, other: &JunctionBox) -> usize {
         let x = self.x.abs_diff(other.x).pow(2);
         let y = self.y.abs_diff(other.y).pow(2);
         let z = self.z.abs_diff(other.z).pow(2);
-        (x + y + z) as f32
+        x + y + z
     }
 }
 
@@ -90,7 +90,7 @@ fn connection_combinations_by_len<'a>(
     possible_connections.sort_by(|j1, j2| {
         let d1 = j1.0.euclid_distance_to(j1.1);
         let d2 = j2.0.euclid_distance_to(j2.1);
-        d1.total_cmp(&d2)
+        d1.cmp(&d2)
     });
     possible_connections
 }
