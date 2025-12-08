@@ -1,0 +1,1 @@
+- the proper way to do this is using a [Disjoint-set data structure](https://en.wikipedia.org/wiki/Disjoint-set_data_structure) (a.k.a Union-Find)
