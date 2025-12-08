@@ -117,7 +117,7 @@ pub fn part_2(input: &str) -> Answer {
     let possible_connections = connection_combinations_by_len(&junction_boxes);
     let mut circuits: Vec<Vec<&JunctionBox>> = Vec::new();
 
-    let last = possible_connections.into_iter().cycle().find(|(from, to)| {
+    let last = possible_connections.into_iter().find(|(from, to)| {
         connect(from, to, &mut circuits);
         circuits[0].len() == target_len
     });
