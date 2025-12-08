@@ -96,7 +96,7 @@ fn connect<'a>(
     }
 }
 
-/// Returns all possible connections sorted ascending by length
+/// Returns all possible connections sorted ascending by euclid distance
 fn connection_combinations_by_len<'a>(
     points: &'a [JunctionBox],
 ) -> Vec<(&'a JunctionBox, &'a JunctionBox)> {
@@ -124,7 +124,7 @@ pub fn part_1(input: &str) -> Answer {
         .take(N_CONNECTIONS)
         .for_each(|(from, to)| connect(from, to, &mut circuits));
 
-    // sort descending by length
+    // sort descending by circuit length
     circuits.sort_by(|a, b| b.len().cmp(&a.len()));
     circuits.into_iter().take(3).map(|it| it.len()).product()
 }
