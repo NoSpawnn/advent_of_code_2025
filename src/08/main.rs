@@ -33,23 +33,6 @@ impl JunctionBox {
         let z = self.z.abs_diff(other.z).pow(2);
         (x + y + z) as f32
     }
-
-    fn euclid_distance_to_closest<'a>(&self, other: &'a [JunctionBox]) -> f32 {
-        let closest = self.find_closest(other);
-        self.euclid_distance_to(closest)
-    }
-
-    fn find_closest<'a>(&self, other: &'a [JunctionBox]) -> &'a JunctionBox {
-        other
-            .iter()
-            .filter(|other| *other != self)
-            .min_by(|cur, next| {
-                let cur_dist = self.euclid_distance_to(cur);
-                let next_dist = self.euclid_distance_to(next);
-                cur_dist.total_cmp(&next_dist)
-            })
-            .expect("other should not be empty")
-    }
 }
 
 fn connect<'a>(
