@@ -10,14 +10,12 @@ fn area(a: &Point, b: &Point) -> usize {
 }
 
 fn biggest_area<'a>(points: &'a [Point]) -> (&'a Point, &'a Point) {
-    let all_pairs = points
+    points
         .iter()
         .enumerate()
-        .flat_map(|(i, j1)| points[i + 1..].iter().map(move |j2| (j1, j2)));
-
-    all_pairs
-        .max_by(|a, b| area(a.0, a.1).cmp(&area(b.0, b.1)))
-        .expect("")
+        .flat_map(|(i, j1)| points[i + 1..].iter().map(move |j2| (j1, j2)))
+        .max_by_key(|(p1, p2)| area(p1, p2))
+        .expect("points should not be empty")
 }
 
 pub fn part_1(input: &str) -> Answer {
