@@ -1,0 +1,2 @@
+- [[2025 Day 9 (Part 2)] Check your solution with this input data : r/adventofcode](https://www.reddit.com/r/adventofcode/comments/1pi5rqn/2025_day_9_part_2_check_your_solution_with_this/)
+    - Yep! My algorithm fails! :D
