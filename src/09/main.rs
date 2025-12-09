@@ -46,7 +46,7 @@ pub fn part_2(input: &str) -> Answer {
         .windows(2)
         .take(points.len())
         .map(|vertices| (&vertices[0], &vertices[1]))
-        .chain(Some((&points[0], &points[points.len() - 1])))
+        .chain([(&points[0], &points[points.len() - 1])])
         .collect();
     let mut possible: Vec<_> = points
         .iter()
