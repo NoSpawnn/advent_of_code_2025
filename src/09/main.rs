@@ -8,6 +8,14 @@ struct Point {
     col: usize,
 }
 
+impl Point {
+    fn rect_area_with(&self, other: &Point) -> usize {
+        let width = self.col.abs_diff(other.col) + 1;
+        let height = self.row.abs_diff(other.row) + 1;
+        width * height
+    }
+}
+
 impl From<&str> for Point {
     fn from(value: &str) -> Self {
         // input is column major
@@ -19,45 +27,43 @@ impl From<&str> for Point {
     }
 }
 
-fn area(a: &Point, b: &Point) -> usize {
-    let width = a.col.abs_diff(b.col) + 1;
-    let height = a.row.abs_diff(b.row) + 1;
-    width * height
-}
-
-fn biggest_area(points: &[Point]) -> usize {
+pub fn part_1(input: &str) -> Answer {
+    let points: Vec<Point> = input.lines().map(Point::from).collect();
     points
         .iter()
         .enumerate()
         .flat_map(|(i, p1)| points[i + 1..].iter().map(move |p2| (p1, p2)))
-        .map(|(p1, p2)| area(p1, p2))
+        .map(|(p1, p2)| p1.rect_area_with(p2))
         .max()
         .expect("points should not be empty")
-}
-
-pub fn part_1(input: &str) -> Answer {
-    let points: Vec<Point> = input.lines().map(Point::from).collect();
-    biggest_area(&points)
 }
 
 pub fn part_2(input: &str) -> Answer {
     let points: Vec<Point> = input.lines().map(Point::from).collect();
     let edges: Vec<(&Point, &Point)> = points
         .windows(2)
-        .take(points.len())
         .map(|vertices| (&vertices[0], &vertices[1]))
-        .chain([(&points[0], &points[points.len() - 1])])
+        .chain([(&points[points.len() - 1], &points[0])]) // closing edge
         .collect();
-    let mut possible: Vec<_> = points
+    let mut possible_rects: Vec<_> = points
         .iter()
         .enumerate()
-        .flat_map(|(i, p1)| points[i + 1..].iter().map(move |p2| (p1, p2, area(p1, p2))))
+        .flat_map(|(i, p1)| {
+            points[i + 1..]
+                .iter()
+                .map(move |p2| (p1, p2, p1.rect_area_with(p2)))
+        })
         .collect();
-    possible.sort_by_key(|(_, _, a)| *a);
-    possible
-        .iter()
+    possible_rects.sort_by_key(|(_, _, a)| *a);
+    possible_rects
+        .into_iter()
         .rev()
         .find(|(p1, p2, _)| {
+            // all edges in the full polygon must be:
+            //   - leftmost point of edge must be left of this rect OR
+            //   - rightmost point of edge must be right of this rect OR
+            //   - topmost point of edge must be above this rect OR
+            //   - bottommost point of edge must be below this rect
             edges.iter().all(|(start, end)| {
                 let before = p1.col.max(p2.col) <= start.col.min(end.col);
                 let after = p1.col.min(p2.col) >= start.col.max(end.col);
