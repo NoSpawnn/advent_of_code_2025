@@ -70,8 +70,8 @@ pub fn part_1(input: &str) -> Answer {
         .map(|machine| {
             // initial statess is a single state with all lights off
             let mut states = HashSet::from([vec![false; machine.target.len()]]);
-            // BFS: find the length of the first sequence of button presses
-            // that results in the desired state (minimium 1)
+            // BFS: find the length of the first sequence of any button presses
+            // that results in the desired state (minimium 1) - see README.md for a written example
             (1..)
                 .find(|_| {
                     states = states
