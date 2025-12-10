@@ -64,9 +64,9 @@ fn push_button(mut state: Vec<bool>, button: &Button) -> Vec<bool> {
 }
 
 pub fn part_1(input: &str) -> Answer {
-    let machines: Vec<Machine> = input.lines().map(Machine::from).collect();
-    machines
-        .iter()
+    input
+        .lines()
+        .map(Machine::from)
         .map(|machine| {
             // initial statess is a single state with all lights off
             let mut states = HashSet::from([vec![false; machine.target.len()]]);
@@ -91,7 +91,8 @@ pub fn part_1(input: &str) -> Answer {
 }
 
 pub fn part_2(input: &str) -> Answer {
-    todo!("day 10 part 2")
+    // todo!("day 10 part 2")
+    0
 }
 
 fn main() {
