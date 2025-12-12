@@ -1,6 +1,6 @@
 // https://adventofcode.com/2025/day/12
 
-type Answer = i32;
+type Answer = usize;
 type Shape = Vec<Vec<bool>>;
 
 fn parse_shape(block: &str) -> Shape {
@@ -36,39 +36,29 @@ fn parse(lines: &str) -> (impl Iterator<Item = (String, Vec<usize>)>, Vec<Shape>
     unreachable!()
 }
 
-fn region_area(width: usize, height: usize) -> usize {
-    width * height
-}
-
-fn shape_area(s: &Shape) -> usize {
-    s.len() * s[0].len()
-}
-
 pub fn part_1(input: &str) -> Answer {
     let (regions, shapes) = parse(input);
-
-    let mut ans = 0;
-
-    for (dimensions, presents) in regions {
-        let (width, height) = dimensions.split_once('x').unwrap();
-        let width = width.parse::<usize>().unwrap();
-        let height = height.parse::<usize>().unwrap();
-        let region_area = region_area(width, height);
-        let total_shape_area: usize = presents
-            .iter()
-            .enumerate()
-            .map(|(shape_idx, &count)| {
-                (1..count)
-                    .map(|_| shape_area(&shapes[shape_idx]))
-                    .sum::<usize>()
-            })
-            .sum();
-        if total_shape_area < region_area {
-            ans += 1;
-        }
-    }
-
-    ans
+    regions
+        .filter(|(dimensions, presents)| {
+            let (width, height) = dimensions.split_once('x').unwrap();
+            let width = width.parse::<usize>().unwrap();
+            let height = height.parse::<usize>().unwrap();
+            let region_area = width * height;
+            let total_shape_area = presents
+                .iter()
+                .enumerate()
+                .map(|(shape_idx, &count)| {
+                    (1..count)
+                        .map(|_| {
+                            let s = &shapes[shape_idx];
+                            s.len() * s[0].len()
+                        })
+                        .sum::<usize>()
+                })
+                .sum();
+            region_area > total_shape_area
+        })
+        .count()
 }
 
 pub fn part_2(input: &str) -> Answer {
