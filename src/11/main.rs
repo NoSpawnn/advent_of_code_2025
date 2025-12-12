@@ -76,17 +76,17 @@ pub fn part_2(input: &str) -> Answer {
     let svr = find_device("svr", &devices);
     let dac = find_device("dac", &devices);
     let fft = find_device("fft", &devices);
-    let out = Device {
+    let out = &Device {
         name: String::from("out"),
         outputs: vec![],
     };
     let mut cache = HashMap::new();
     let svr_to_dac = svr.routes_to(dac, &devices, &mut cache);
     let dac_to_fft = dac.routes_to(fft, &devices, &mut cache);
-    let fft_to_out = fft.routes_to(&out, &devices, &mut cache);
+    let fft_to_out = fft.routes_to(out, &devices, &mut cache);
     let svr_to_fft = svr.routes_to(fft, &devices, &mut cache);
     let fft_to_dac = fft.routes_to(dac, &devices, &mut cache);
-    let dac_to_out = dac.routes_to(&out, &devices, &mut cache);
+    let dac_to_out = dac.routes_to(out, &devices, &mut cache);
     svr_to_dac * dac_to_fft * fft_to_out + svr_to_fft * fft_to_dac * dac_to_out
 }
 
