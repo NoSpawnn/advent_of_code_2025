@@ -26,27 +26,24 @@ fn paths(
     }
 }
 
-pub fn part_1(input: &str) -> Answer {
-    let devices: HashMap<String, Vec<String>> = input
+fn parse(lines: &str) -> HashMap<String, Vec<String>> {
+    lines
         .lines()
         .map(|line| {
             let (name, outputs) = line.split_once(':').unwrap();
             let outputs = outputs.split_whitespace().map(String::from);
             (String::from(name), outputs.collect())
         })
-        .collect();
+        .collect()
+}
+
+pub fn part_1(input: &str) -> Answer {
+    let devices = parse(input);
     paths("you", "out", &devices, &mut HashMap::new())
 }
 
 pub fn part_2(input: &str) -> Answer {
-    let devices: HashMap<String, Vec<String>> = input
-        .lines()
-        .map(|line| {
-            let (name, outputs) = line.split_once(':').unwrap();
-            let outputs = outputs.split_whitespace().map(String::from);
-            (String::from(name), outputs.collect())
-        })
-        .collect();
+    let devices = parse(input);
     let mut cache = HashMap::new();
     let svr_to_dac = paths("svr", "dac", &devices, &mut cache);
     let dac_to_fft = paths("dac", "fft", &devices, &mut cache);
